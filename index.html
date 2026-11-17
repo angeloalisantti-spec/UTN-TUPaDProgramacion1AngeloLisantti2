@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Países</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    body { background: #f5f5f5; }
+    .container { margin-top: 20px; }
+    table.striped th, table.striped td { padding: 8px; }
+    .msg { margin: 10px 0; min-height: 20px; }
+  </style>
+</head>
+<body>
+  <nav class="blue darken-2">
+    <div class="nav-wrapper container">
+      <a href="#" class="brand-logo">Países</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <ul class="tabs">
+      <li class="tab col s2"><a href="#tab-lista" class="active">Listado</a></li>
+      <li class="tab col s2"><a href="#tab-agregar">Agregar</a></li>
+      <li class="tab col s2"><a href="#tab-actualizar">Actualizar</a></li>
+      <li class="tab col s2"><a href="#tab-buscar">Buscar</a></li>
+      <li class="tab col s2"><a href="#tab-filtrar">Filtrar</a></li>
+      <li class="tab col s2"><a href="#tab-ordenar">Ordenar</a></li>
+      <li class="tab col s2"><a href="#tab-stats">Estadísticas</a></li>
+    </ul>
+
+    <div id="tab-lista" class="tab-content">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Todos los países</span>
+          <button class="btn waves-effect waves-light" onclick="cargarLista()">
+            <i class="material-icons left">refresh</i>Actualizar
+          </button>
+          <div id="msg-lista" class="msg"></div>
+          <div id="tabla-lista"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-agregar" class="tab-content">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Agregar país</span>
+          <div class="row">
+            <div class="input-field col s12 m6">
+              <input id="ag-nombre" type="text">
+              <label for="ag-nombre">Nombre</label>
+            </div>
+            <div class="input-field col s12 m6">
+              <input id="ag-continente" type="text">
+              <label for="ag-continente">Continente</label>
+            </div>
+            <div class="input-field col s12 m6">
+              <input id="ag-poblacion" type="number" min="0">
+              <label for="ag-poblacion">Población</label>
+            </div>
+            <div class="input-field col s12 m6">
+              <input id="ag-superficie" type="number" min="0">
+              <label for="ag-superficie">Superficie (km²)</label>
+            </div>
+          </div>
+          <button class="btn waves-effect waves-light" onclick="agregarPais()">
+            <i class="material-icons left">add</i>Agregar
+          </button>
+          <div id="msg-agregar" class="msg"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-actualizar" class="tab-content">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Actualizar país</span>
+          <div class="row">
+            <div class="input-field col s12">
+              <input id="ac-nombre" type="text">
+              <label for="ac-nombre">Nombre del país</label>
+            </div>
+            <div class="input-field col s12 m6">
+              <input id="ac-poblacion" type="number" min="0">
+              <label for="ac-poblacion">Nueva población (vacío = no cambiar)</label>
+            </div>
+            <div class="input-field col s12 m6">
+              <input id="ac-superficie" type="number" min="0">
+              <label for="ac-superficie">Nueva superficie (vacío = no cambiar)</label>
+            </div>
+          </div>
+          <button class="btn waves-effect waves-light" onclick="actualizarPais()">
+            <i class="material-icons left">update</i>Actualizar
+          </button>
+          <div id="msg-actualizar" class="msg"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-buscar" class="tab-content">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Buscar país</span>
+          <div class="input-field">
+            <input id="bu-texto" type="text" oninput="buscarPais()">
+            <label for="bu-texto">Texto a buscar</label>
+          </div>
+          <div id="tabla-buscar"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-filtrar" class="tab-content">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Filtrar países</span>
+          <div class="row">
+            <div class="input-field col s12 m6">
+              <input id="fi-continente" type="text">
+              <label for="fi-continente">Continente</label>
+            </div>
+            <div class="input-field col s6 m3">
+              <input id="fi-pobmin" type="number" min="0">
+              <label for="fi-pobmin">Pob. mín</label>
+            </div>
+            <div class="input-field col s6 m3">
+              <input id="fi-pobmax" type="number" min="0">
+              <label for="fi-pobmax">Pob. máx</label>
+            </div>
+            <div class="input-field col s6 m3">
+              <input id="fi-supmin" type="number" min="0">
+              <label for="fi-supmin">Sup. mín</label>
+            </div>
+            <div class="input-field col s6 m3">
+              <input id="fi-supmax" type="number" min="0">
+              <label for="fi-supmax">Sup. máx</label>
+            </div>
+          </div>
+          <button class="btn waves-effect waves-light" onclick="filtrarPaises()">
+            <i class="material-icons left">filter_list</i>Filtrar
+          </button>
+          <div id="tabla-filtrar"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-ordenar" class="tab-content">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Ordenar países</span>
+          <div class="row">
+            <div class="input-field col s12 m6">
+              <select id="or-clave">
+                <option value="nombre" selected>Nombre</option>
+                <option value="poblacion">Población</option>
+                <option value="superficie">Superficie</option>
+              </select>
+              <label>Clave</label>
+            </div>
+            <div class="input-field col s12 m6">
+              <select id="or-orden">
+                <option value="true" selected>Ascendente</option>
+                <option value="false">Descendente</option>
+              </select>
+              <label>Orden</label>
+            </div>
+          </div>
+          <button class="btn waves-effect waves-light" onclick="ordenarPaises()">
+            <i class="material-icons left">sort</i>Ordenar
+          </button>
+          <div id="tabla-ordenar"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-stats" class="tab-content">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Estadísticas</span>
+          <button class="btn waves-effect waves-light" onclick="cargarStats()">
+            <i class="material-icons left">analytics</i>Calcular
+          </button>
+          <div id="stats-contenido"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script>
+    // Solo presentacion y consumo de la API (fuente de verdad: Python)
+    function tablaHTML(lista) {
+      if (!lista || lista.length === 0) return '<p>No hay países.</p>';
+      let html = '<table class="striped responsive-table"><thead><tr><th>Nombre</th><th>Población</th><th>Superficie (km²)</th><th>Continente</th></tr></thead><tbody>';
+      lista.forEach(p => {
+        html += `<tr><td>${p.nombre}</td><td>${Number(p.poblacion).toLocaleString()}</td><td>${Number(p.superficie).toLocaleString()}</td><td>${p.continente}</td></tr>`;
+      });
+      html += '</tbody></table>';
+      return html;
+    }
+
+    function msg(id, texto, ok) {
+      document.getElementById(id).innerHTML = `<p class="${ok ? 'green-text' : 'red-text'}">${texto}</p>`;
+    }
+
+    async function cargarLista() {
+      const res = await fetch('/api/paises');
+      const data = await res.json();
+      document.getElementById('tabla-lista').innerHTML = tablaHTML(data);
+    }
+
+    async function agregarPais() {
+      const body = {
+        nombre: document.getElementById('ag-nombre').value.trim(),
+        continente: document.getElementById('ag-continente').value.trim(),
+        poblacion: document.getElementById('ag-poblacion').value,
+        superficie: document.getElementById('ag-superficie').value
+      };
+      const res = await fetch('/api/agregar', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+      const data = await res.json();
+      msg('msg-agregar', data.mensaje, data.ok);
+      if (data.ok) cargarLista();
+    }
+
+    async function actualizarPais() {
+      const body = {
+        nombre: document.getElementById('ac-nombre').value.trim(),
+        poblacion: document.getElementById('ac-poblacion').value,
+        superficie: document.getElementById('ac-superficie').value
+      };
+      const res = await fetch('/api/actualizar', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+      const data = await res.json();
+      msg('msg-actualizar', data.mensaje, data.ok);
+      if (data.ok) cargarLista();
+    }
+
+    async function buscarPais() {
+      const q = document.getElementById('bu-texto').value.trim();
+      const res = await fetch('/api/buscar?q=' + encodeURIComponent(q));
+      const data = await res.json();
+      document.getElementById('tabla-buscar').innerHTML = tablaHTML(data);
+    }
+
+    async function filtrarPaises() {
+      const params = new URLSearchParams();
+      const c = document.getElementById('fi-continente').value.trim();
+      const pmin = document.getElementById('fi-pobmin').value;
+      const pmax = document.getElementById('fi-pobmax').value;
+      const smin = document.getElementById('fi-supmin').value;
+      const smax = document.getElementById('fi-supmax').value;
+      if (c) params.set('continente', c);
+      if (pmin && pmax) { params.set('pob_min', pmin); params.set('pob_max', pmax); }
+      if (smin && smax) { params.set('sup_min', smin); params.set('sup_max', smax); }
+      const res = await fetch('/api/filtrar?' + params.toString());
+      const data = await res.json();
+      if (data.error) { document.getElementById('tabla-filtrar').innerHTML = `<p class="red-text">${data.error}</p>`; return; }
+      document.getElementById('tabla-filtrar').innerHTML = tablaHTML(data);
+    }
+
+    async function ordenarPaises() {
+      const clave = document.getElementById('or-clave').value;
+      const asc = document.getElementById('or-orden').value;
+      const res = await fetch('/api/ordenar?clave=' + clave + '&asc=' + asc);
+      const data = await res.json();
+      if (data.error) { document.getElementById('tabla-ordenar').innerHTML = `<p class="red-text">${data.error}</p>`; return; }
+      document.getElementById('tabla-ordenar').innerHTML = tablaHTML(data);
+    }
+
+    async function cargarStats() {
+      const res = await fetch('/api/estadisticas');
+      const data = await res.json();
+      if (data.error) {
+        document.getElementById('stats-contenido').innerHTML = `<p class="red-text">${data.error}</p>`;
+        return;
+      }
+      let html = '<ul class="collection">';
+      html += `<li class="collection-item">Total de países: ${data.total}</li>`;
+      html += `<li class="collection-item">Mayor población: ${data.mayor_poblacion.nombre} (${Number(data.mayor_poblacion.poblacion).toLocaleString()})</li>`;
+      html += `<li class="collection-item">Menor población: ${data.menor_poblacion.nombre} (${Number(data.menor_poblacion.poblacion).toLocaleString()})</li>`;
+      html += `<li class="collection-item">Mayor superficie: ${data.mayor_superficie.nombre} (${Number(data.mayor_superficie.superficie).toLocaleString()} km²)</li>`;
+      html += `<li class="collection-item">Menor superficie: ${data.menor_superficie.nombre} (${Number(data.menor_superficie.superficie).toLocaleString()} km²)</li>`;
+      html += `<li class="collection-item">Promedio de población: ${Number(data.promedio_poblacion).toLocaleString(undefined,{maximumFractionDigits:2})}</li>`;
+      html += `<li class="collection-item">Promedio de superficie: ${Number(data.promedio_superficie).toLocaleString(undefined,{maximumFractionDigits:2})} km²</li>`;
+      html += '</ul>';
+      html += '<h6>Países por continente</h6><ul class="collection">';
+      for (const [k, v] of Object.entries(data.cantidad_por_continente)) {
+        html += `<li class="collection-item">${k}: ${v}</li>`;
+      }
+      html += '</ul>';
+      document.getElementById('stats-contenido').innerHTML = html;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      M.Tabs.init(document.querySelectorAll('.tabs'));
+      M.FormSelect.init(document.querySelectorAll('select'));
+      M.updateTextFields();
+      cargarLista();
+    });
+  </script>
+</body>
+</html>
